@@ -1,0 +1,64 @@
+
+.square {
+  width: 20px;
+  height: 20px;
+  display: none;
+  margin-right: 5px;
+}
+
+.square:checked .colorIndicator {
+  border: 3px solid #000;
+}
+
+.colorIndicator {
+  display: inline-block;
+  width: 50px;
+  height: 50px;
+  margin-right: 5px;
+  /* border: 2px solid #000; */
+  border-radius: 20%;
+  margin: 5px;
+  opacity: 50%;
+}
+
+.selectedColor {
+  transform: scale(1.2);
+  opacity: 100%;
+}
+
+
+.stylePicker {
+  display: none;
+}
+
+.labelStyle{
+  text-align: center;
+  font-size: small;
+  font-weight: bold;
+}
+
+.styleIndicator {
+  display: inline-block;
+  width: 80px; /* Increase the width as desired */
+  height: 80px; /* Increase the height as desired */
+  border-radius: 20%;
+  opacity: 50%;
+}
+
+
+.styleIndicator span {
+  text-align: center;
+}
+
+.styleIndicator img {
+  width: 80%; /* Adjust the width to occupy the entire container */
+  height: 80%; /* Adjust the height to occupy the entire container */
+  object-fit: cover; /* Maintain aspect ratio and fill the container */
+  border-radius: 20%;
+}
+
+
+.selectedStyle {
+  transform: scale(1.2);
+  opacity: 100%;
+}

@@ -1,0 +1,12 @@
+.navbar::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  display: block;
+  width: 0.0625rem;
+  height: 1.5rem;
+  background-color: #ababab;
+  content: "";
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
