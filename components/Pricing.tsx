@@ -1,5 +1,11 @@
 import { useSession } from "next-auth/react";
-import React, { useState } from "react";
+import axios from "axios";
+import React, { FormEvent, useState } from "react";
+import {loadStripe} from '@stripe/stripe-js';
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+);
 
 const PricingComponent = () => {
   const price = 0.00069;
@@ -9,18 +15,15 @@ const PricingComponent = () => {
   const handleChange = (e) => {
     setValue(parseInt(e.target.value));
   };
-
-  const handleSubmit = async () => {
-    try {
-      const body = {};
-      const response = await fetch(`/api/payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const response = await axios.post("/api/payment", {
+      priceId: 'price_1NNEDxE7OU1KKCiDLG1rEn1Y',
+      value,
+    });
+    const { data }= response;
+    window.location.assign(data.url);
   };
 
   return (

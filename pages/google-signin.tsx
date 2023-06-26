@@ -8,6 +8,10 @@ const SignInPage: React.FC = () => {
   useEffect(() => {
     if (!(status === "loading") && !session) void signIn("google");
     if (session) window.close();
+    if (session) {
+      console.log("Name:", session.user.name);
+      console.log("Email:", session.user.email);
+    }
   }, [session, status]);
 
   return null;
