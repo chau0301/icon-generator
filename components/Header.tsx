@@ -27,7 +27,7 @@ const Header = ({ toggleNavbar }) => {
             className="text-white text-sm font-medium flex items-center ml-3 cursor-default"
           >
             <img src="/logo.svg" alt="Logo" className="w-6 mr-2" />
-            <span>IconGenerator</span>
+            <span>LogoGenerator</span>
           </Link>
         </div>
         <nav id="navbar" className="flex-grow relative navbar">

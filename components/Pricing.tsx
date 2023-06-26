@@ -2,6 +2,7 @@ import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 
 const PricingComponent = () => {
+  const price = 0.00069;
   const { data: session, status } = useSession();
   const [value, setValue] = useState(10000);
 
@@ -9,11 +10,24 @@ const PricingComponent = () => {
     setValue(parseInt(e.target.value));
   };
 
+  const handleSubmit = async () => {
+    try {
+      const body = {};
+      const response = await fetch(`/api/payment`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="px-4">
       <h1 className="text-4xl">Pricing</h1>
       <p className="py-4">
-        <span className="text-7xl text-green-600 font-bold">$0.00069</span>per
+        <span className="text-7xl text-green-600 font-bold">${price}</span>per
         character
       </p>
 
@@ -38,17 +52,20 @@ const PricingComponent = () => {
           </div>
         </div>
         {session ? (
-          <button className="text-left my-8 border-white border-2 p-2 hover:bg-white hover:text-black">
+          <button
+            className="text-left my-8 border-white border-2 p-2 hover:bg-white hover:text-black"
+            onClick={handleSubmit}
+          >
             <span>Buy {(value / 1000).toLocaleString()}</span>k Tokens
             <span className="p-1 text-white bg-green-800 rounded-xl mx-2">
-              ${(value * 0.00069).toFixed(2).toLocaleString()}
+              ${(value * price).toFixed(2).toLocaleString()}
             </span>
           </button>
         ) : (
           <div className="text-left my-8">
             <span>Buy {(value / 1000).toLocaleString()}</span>k Tokens
             <span className="p-1 text-white bg-green-800 rounded-xl mx-2">
-              ${(value * 0.00069).toFixed(2).toLocaleString()}
+              ${(value * price).toFixed(2).toLocaleString()}
             </span>
           </div>
         )}
