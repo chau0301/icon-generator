@@ -3,10 +3,6 @@ import axios from "axios";
 import React, { FormEvent, useState } from "react";
 import {loadStripe} from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-);
-
 const PricingComponent = () => {
   const price = 0.00069;
   const { data: session, status } = useSession();

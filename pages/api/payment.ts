@@ -1,9 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Stripe from "stripe";
 
-const dotenv = require("dotenv");
-dotenv.config();
-
 const stripeKey = process.env.STRIPE_SECRET_KEY;
 const stripe = new Stripe(stripeKey, { apiVersion: "2022-11-15" });
 

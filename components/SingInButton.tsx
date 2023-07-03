@@ -1,5 +1,6 @@
 import React from "react";
 import { popupCenter } from "../ultil/popupUtils";
+import { signIn } from "next-auth/react";
 
 interface SignInButtonProps {
   className?: string;
@@ -13,7 +14,9 @@ const SignInButton: React.FC<SignInButtonProps> = ({
 }) => {
   return (
     <button
-      onClick={() => {
+      onClick={(e) => {
+        e.preventDefault()
+        // signIn('google')
         popupCenter("/google-signin", "Sign In");
       }}
       className={`px-4 py-1 block w-full h-full text-left ${className}`}

@@ -3,7 +3,8 @@ import colors from "../ultil/colors";
 import styles from "../ultil/styles";
 import shapes from "../ultil/shapes";
 import LoginWithGoogleButton from "./LoginWithGoogle";
-import { signOut, useSession } from "next-auth/react";
+import {  useSession } from "next-auth/react";
+import Router from "next/router";
 
 const Generate = () => {
   const { data: session } = useSession();
@@ -19,7 +20,8 @@ const Generate = () => {
     setLogoDescription(e.target.value);
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const formData = {
       selectedColor,
       logoStyle,
@@ -66,7 +68,7 @@ const Generate = () => {
         />
       </div>
 
-      <div className="mb-4 container flex flex-wrap max-w-md">
+      <div className="mb-4 flex flex-wrap max-w-md">
         <label className="block mb-2 font-medium">2. Primary Color</label>
         <div className="flex flex-wrap">
           {colors.map((color) => (

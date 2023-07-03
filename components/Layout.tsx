@@ -26,6 +26,7 @@ const Layout: React.FC<Props> = (props) => {
       >
         {props.children}
       </div>
+      
       <Navbar navbarOpen={navbarOpen} />
     </div>
   );

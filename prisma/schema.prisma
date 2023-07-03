@@ -59,6 +59,8 @@ model User {
   posts         Post[]
   accounts      Account[]
   sessions      Session[]
+  credits       Int       @default(0)
+  generators    Generator[]
 
   @@map(name: "users")
 }
@@ -70,4 +72,16 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verificationtokens")
+}
+
+model Generator {
+  id            Int       @id @default(autoincrement())
+  author        User?     @relation(fields: [authorId], references: [id])
+  authorId      Int?
+  image         String
+  prompt        String
+  createdAt     DateTime  @default(now()) @map(name: "created_at")
+  updatedAt     DateTime  @updatedAt @map(name: "updated_at")
+
+  @@map(name: "generators")
 }

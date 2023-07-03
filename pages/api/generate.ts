@@ -1,14 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getServerSession } from "next-auth/next"
 import {
   S3Client,
   PutObjectCommand,
-  GetObjectCommand,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import prisma from "../../lib/prisma";
+import { authOptions } from "./auth/[...nextauth]";
 
-const dotenv = require("dotenv");
-
-dotenv.config();
 
 const {
   OPENAI_API_KEY = "",
@@ -34,36 +32,58 @@ type PromptImageData = {
   logoDescription: string;
 };
 
-type GeneratedImage = {
-  url: string;
-};
-
+// POST /api/generate
 export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  const session = await getServerSession(req, res, authOptions)
+  if (!session) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
   try {
     const image = req.body;
-    // * 
-    // const timestamp = Date.now();
     const prompt = promptImage(image);
     const result = await getImage(prompt);
     const generatedImages = result?.data || [];
-    const uploadImages = generatedImages.map((image) => image.url)
-    // * Save on S3
-    // const uploadImages = await Promise.all(
-    //   generatedImages.map(
-    //     async (generatedImage: GeneratedImage, index: number) => {
-    //       const imageName = `generated-image-${timestamp}.${index}`;
-    //       return await uploadToS3(generatedImage.url, imageName);
-    //     }
-    //   )
-    // );
-    return res.status(201).json({ url: uploadImages });
+    const imageUrl = generatedImages.map((image) => image.url);
+    saveModel(imageUrl, session, prompt);
+    return res.status(201).json({ url: imageUrl });
   } catch (error) {
     console.error("Error handling request:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
+}
+
+// ```
+// const getObjectParams = {
+//   Bucket: AWS_BUCKET_NAME,
+//   Key: fileName,
+// };
+
+// const commandGetImage = new GetObjectCommand(getObjectParams);
+// const url = await getSignedUrl(s3, commandGetImage, { expiresIn: 3600 });
+// return url;
+// ```
+
+async function saveModel(imageUrl: string[], session: any, prompt: string) {
+  // save to db
+  const timestamp = Date.now();
+  await Promise.all(
+    imageUrl.map(async (url, index) => {
+      const imageName = `image-${timestamp}.${index}`;
+      await uploadToS3(url, imageName);
+      await prisma.generator.create({
+        data: {
+          image: imageName,
+          prompt,
+          author: { connect: { email: session?.user?.email } },
+        },
+      });
+    })
+  );
+  return true;
 }
 
 function promptImage(data: PromptImageData) {
@@ -116,15 +136,7 @@ async function uploadToS3(imageURL: string, fileName: string) {
     const command = new PutObjectCommand(uploadParams);
     await s3.send(command);
     console.log(`Image uploaded to S3: ${fileName}`);
-
-    const getObjectParams = {
-      Bucket: AWS_BUCKET_NAME,
-      Key: fileName,
-    };
-
-    const commandGetImage = new GetObjectCommand(getObjectParams);
-    const url = await getSignedUrl(s3, commandGetImage, { expiresIn: 3600 });
-    return url;
+    return true;
   } catch (error) {
     console.error("Error uploading image to S3:", error);
     throw error;
