@@ -37,15 +37,18 @@ export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getServerSession(req, res, authOptions)
-  if (!session) {
-    res.status(401).json({ error: 'Unauthorized' });
-    return;
-  }
+  // ! dont need session need update in feature
+  const session = {};
+  // const session = await getServerSession(req, res, authOptions)
+  // if (!session) {
+  //   res.status(401).json({ error: 'Unauthorized' });
+  //   return;
+  // }
   try {
     const image = req.body;
     const prompt = promptImage(image);
     const result = await getImage(prompt);
+    console.log(111, result)
     const generatedImages = result?.data || [];
     const imageUrl = generatedImages.map((image) => image.url);
     saveModel(imageUrl, session, prompt);
@@ -78,7 +81,7 @@ async function saveModel(imageUrl: string[], session: any, prompt: string) {
         data: {
           image: imageName,
           prompt,
-          author: { connect: { email: session?.user?.email } },
+          author: session?.user ? { connect: { email: session?.user?.email } } : null,
         },
       });
     })
